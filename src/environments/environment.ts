@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl:'http://localhost:9090/',
-  questionnaireUrl:'questionnaires'
+  // baseUrl: 'http://localhost:9090/'
+  baseUrl: 'http://voltageapi.cba.pl/api2.php/'
 };
 
 /*
