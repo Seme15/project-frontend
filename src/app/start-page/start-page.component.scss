@@ -230,3 +230,14 @@ svg#clouds {
 mat-icon:hover {
   cursor: default;
 }
+
+.icon-delete:hover {
+  cursor: pointer;
+}
+
+.icon-panel {
+  display: flex;
+  width: 10%;
+  flex-direction: row;
+  justify-content: flex-end;
+}

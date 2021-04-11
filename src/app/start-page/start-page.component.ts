@@ -1,24 +1,39 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ProductItemComponent} from './product-item/product-item.component';
 import {ProductItem} from '../model/product-item.model';
+import {ProductService} from '../service/product.service';
+import {Subscription} from "rxjs";
+import {LoginComponent} from "../login/login.component";
+import {User} from "../model/user.model";
 
 @Component({
   selector: 'app-start-page',
   templateUrl: './start-page.component.html',
   styleUrls: ['./start-page.component.scss']
 })
-export class StartPageComponent implements OnInit {
+export class StartPageComponent implements OnInit, OnDestroy {
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private productService: ProductService) {
   }
 
   products: ProductItem[] = [];
   code: string;
-  useLocalStorage = true;
+  useLocalStorage = false;
+  useService = true;
+  user: User = null;
+  private subscriptions: Subscription[] = [];
 
   ngOnInit(): void {
-    this.products = this.useLocalStorage ? this.initDataFromLocalStorage() : this.initData();
+    if (this.useService) {
+      this.getDataFromService();
+    } else {
+      this.products = this.useLocalStorage ? this.initDataFromLocalStorage() : this.initData();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   openProductForm(): void {
@@ -27,14 +42,30 @@ export class StartPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.name) {
-        this.products.push(result);
-      }
-      if (this.useLocalStorage) {
+      // if (result && result.name) {
+      //   this.products.push(result);
+      // }
+      if (result && result.name && this.useService) {
+        this.persist(result);
+      } else if (this.useLocalStorage) {
         localStorage.setItem('products', JSON.stringify(this.products));
       }
     });
   }
+
+  openLoginForm(): void {
+    const dialogRef = this.dialog.open(LoginComponent, {
+      width: '550px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.name) {
+        console.log(result);
+        this.user = result;
+      }
+    });
+  }
+
 
   private initData(): ProductItem[] {
     return [
@@ -65,6 +96,47 @@ export class StartPageComponent implements OnInit {
   private initDataFromLocalStorage(): ProductItem[] {
     const result: ProductItem[] = JSON.parse(localStorage.getItem('products'));
     return result && result.length > 0 ? result : [];
+  }
+
+  private getDataFromService(): void {
+    this.subscriptions.push(
+      this.productService.getAll().subscribe(products => {
+        this.products = products.map(pr => {
+          const row: ProductItem = {
+            id: pr.Id,
+            name: pr.Name,
+            price: pr.Price,
+            quantity: pr.Quantity,
+            description: pr.Description,
+          };
+          return row;
+        });
+      })
+    );
+  }
+
+  private persist(item: ProductItem): void {
+    console.log('item', item);
+    const row = {
+      Name: item.name,
+      Price: item.price,
+      Quantity: item.quantity,
+      Description: item.description,
+    };
+    this.subscriptions.push(
+      this.productService.save(row).subscribe(() => {
+        this.getDataFromService();
+      })
+    );
+  }
+
+  public deleteProduct(id: number): void {
+    console.log(id);
+    this.subscriptions.push(
+      this.productService.delete(id).subscribe(() => {
+        this.getDataFromService();
+      })
+    );
   }
 
 }

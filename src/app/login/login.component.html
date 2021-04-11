@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>Logowanie</h1>
+<div mat-dialog-content>
+  <div class="form d-flex-column">
+    <form [formGroup]="form">
+      <mat-form-field autofocus>
+        <mat-label>Login</mat-label>
+        <input matInput formControlName="login">
+        <mat-error *ngIf="form.get('login').invalid">
+          Proszę uzupełnić pole login
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Hasło</mat-label>
+        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Ukryj hasło'" [attr.aria-pressed]="hide">
+          <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="form.get('password').invalid">
+          Proszę uzupełnić pole hasło
+        </mat-error>
+      </mat-form-field>
+      <mat-error *ngIf="invalidPassword">
+        Podano błędne hasło bądź login
+      </mat-error>
+    </form>
+  </div>
+
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Anuluj</button>
+  <button mat-button [disabled]="form.invalid" (click)="login(form.getRawValue())">Zaloguj się</button>
+</div>
+
+
