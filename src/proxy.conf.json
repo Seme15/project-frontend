@@ -1,6 +1,6 @@
 {
   "/api/*": {
-    "target": "http://voltageapi.cba.pl/api2.php",
+    "target": "https://voltageapi.cba.pl/api2.php",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true
