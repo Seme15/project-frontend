@@ -4,4 +4,5 @@ export interface ProductItem {
   quantity: number;
   description?: string;
   name: string;
+  userId?: number;
 }
