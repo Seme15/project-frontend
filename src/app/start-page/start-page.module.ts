@@ -14,10 +14,14 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDialogModule} from '@angular/material/dialog';
+import { OrderItemComponent } from './order-item/order-item.component';
+import { OrderSubmitItemComponent } from './order-item/order-submit-item/order-submit-item.component';
+import { OrderListComponent } from './order-list/order-list.component';
+import {MatTableModule} from '@angular/material/table';
 
 
 @NgModule({
-  declarations: [ProductItemComponent],
+  declarations: [ProductItemComponent, OrderItemComponent, OrderSubmitItemComponent, OrderListComponent],
   imports: [
     CommonModule,
     StartPageRoutingModule,
@@ -33,7 +37,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatButtonModule,
     MatInputModule,
     MatRadioModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTableModule
   ]
 })
 export class StartPageModule { }
