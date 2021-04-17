@@ -3,9 +3,12 @@ import {MatDialog} from '@angular/material/dialog';
 import {ProductItemComponent} from './product-item/product-item.component';
 import {ProductItem} from '../model/product-item.model';
 import {ProductService} from '../service/product.service';
-import {Subscription} from "rxjs";
-import {LoginComponent} from "../login/login.component";
-import {User} from "../model/user.model";
+import {Subscription} from 'rxjs';
+import {LoginComponent} from '../login/login.component';
+import {User} from '../model/user.model';
+import {OrderItemComponent} from './order-item/order-item.component';
+import {OrderListComponent} from './order-list/order-list.component';
+import {OrderService} from '../service/order.service';
 
 @Component({
   selector: 'app-start-page',
@@ -14,7 +17,7 @@ import {User} from "../model/user.model";
 })
 export class StartPageComponent implements OnInit, OnDestroy {
 
-  constructor(public dialog: MatDialog, private productService: ProductService) {
+  constructor(public dialog: MatDialog, private productService: ProductService, private orderService: OrderService) {
   }
 
   products: ProductItem[] = [];
@@ -62,10 +65,51 @@ export class StartPageComponent implements OnInit, OnDestroy {
       if (result && result.name) {
         console.log(result);
         this.user = result;
+        this.products = this.products.filter(p => p.userId === 1);
       }
     });
   }
 
+  openOrderForm(product: ProductItem): void {
+    const dialogRef = this.dialog.open(OrderItemComponent, {
+      width: '550px',
+      data: product
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if (result) {
+        result.productId = product.id;
+        result.userId = 1; // TODO: TEMP
+        this.subscriptions.push(this.orderService.save(this.mapOrder(result)).subscribe(val => {
+          console.log(val);
+        }));
+      }
+    });
+  }
+
+  private mapOrder(order: any): any {
+    return {
+      user_id: order.userId,
+      product_id: order.productId,
+      customer_first_name: order.firstName,
+      customer_last_name: order.lastName,
+      customer_mail: order.mail,
+      customer_address: order.address,
+      quantity: order.quantity,
+      price: order.price,
+      accepted: 0,
+    };
+  }
+
+  openOrders(): void {
+    const dialogRef = this.dialog.open(OrderListComponent, {
+      width: '80%'
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+    });
+  }
 
   private initData(): ProductItem[] {
     return [
@@ -108,9 +152,13 @@ export class StartPageComponent implements OnInit, OnDestroy {
             price: pr.Price,
             quantity: pr.Quantity,
             description: pr.Description,
+            userId: Number.parseInt(pr.user_id, 0)
           };
           return row;
         });
+        if (this.user != null) {
+          this.products = this.products.filter(p => p.userId === 1);
+        }
       })
     );
   }
@@ -122,6 +170,7 @@ export class StartPageComponent implements OnInit, OnDestroy {
       Price: item.price,
       Quantity: item.quantity,
       Description: item.description,
+      user_id: 1 // TODO: TEMP
     };
     this.subscriptions.push(
       this.productService.save(row).subscribe(() => {

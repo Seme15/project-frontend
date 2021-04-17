@@ -2,6 +2,9 @@
   <div class="title"><span><h2>System do obsługi zamówień</h2></span></div>
   <div class="spacer"></div>
   <button mat-stroked-button [style.background-color]="'#fff'" [style.color]="'#ff5a00'" style="margin: 5px"
+          (click)="openOrders()" *ngIf="user != null">Pokaż zamówienia
+  </button>
+  <button mat-stroked-button [style.background-color]="'#fff'" [style.color]="'#ff5a00'" style="margin: 5px"
           (click)="openProductForm()" *ngIf="user != null">Dodaj produkt
   </button>
   <button mat-stroked-button [style.background-color]="'#fff'" [style.color]="'#ff5a00'" style="margin: 5px"
@@ -20,17 +23,17 @@
           </div>
         </div>
 
-        <div class="body" *ngFor="let product of products">
+        <div class="body" *ngFor="let product of products; let i = index">
           <div class="child d-flex">
-            <div style="width: 20%">
-              <mat-icon title="Image" style="font-size: 128px">image_not_supported</mat-icon>
-            </div>
-            <div style="width: 70%"><h2 style="margin-right: 5px"><label>{{product.name}} ({{product.quantity}})</label>
+            <div style="width: 90%"><h2 style="margin-right: 5px"><label>{{product.name}} ({{product.quantity}})</label>
             </h2>
-              <div style="width: 100%">{{product.price}} zł</div>&nbsp;
-              <div style="width: 100%">{{product.description}}</div>
+              <div class="full-width">{{product.price}} zł</div>&nbsp;
+              <div class="full-width">{{product.description}}</div>
             </div>
             <div class="icon-panel">
+              <mat-icon class="icon-delete" title="Add"
+                        (click)="openOrderForm(product)" *ngIf="user == null">shopping_cart
+              </mat-icon>
               <mat-icon class="icon-delete" title="Delete"
                         (click)="deleteProduct(product.id)" *ngIf="user">delete
               </mat-icon>
@@ -38,7 +41,7 @@
             </div>
           </div>
         </div>
-        <div class="footer background-light-orange" style=" min-height: 30px; border-radius: 8px">
+        <div class="footer background-light-orange">
           <div class="footer-row">
           </div>
         </div>

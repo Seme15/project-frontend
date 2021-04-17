@@ -215,7 +215,8 @@ svg#clouds {
   font-size: 10px;
   color: red;
   border-top: 1px solid black;
-
+  min-height: 30px;
+  border-radius: 8px;
 }
 
 .send {
