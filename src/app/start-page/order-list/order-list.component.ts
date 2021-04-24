@@ -27,10 +27,12 @@ export class OrderListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getOrders();
+  }
+
+  private getOrders(): void {
     this.orderService.getAll(1).subscribe(orders => {
-      console.log('orders', orders);
       this.dataSource = this.map(orders);
-      console.log('orders', this.dataSource);
     });
   }
 
@@ -44,10 +46,23 @@ export class OrderListComponent implements OnInit {
         customerAddress: order.customer_address,
         quantity: order.quantity,
         price: order.price,
-        accepted: Number.parseInt(order.accepted, 0) === 0,
+        accepted: order.accepted === '1',
         productId: order.product_id
       };
       return o;
+    });
+  }
+
+  finish(data: any): void {
+    this.orderService.finish('1', data.id).subscribe(() => {
+      data.accepted = true;
+    });
+  }
+
+  delete(data: any): void {
+    console.log(data);
+    this.orderService.delete(data.id).subscribe(() => {
+      this.getOrders();
     });
   }
 

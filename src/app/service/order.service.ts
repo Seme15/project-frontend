@@ -10,7 +10,9 @@ import {Observable} from 'rxjs';
 export class OrderService {
 
   private static readonly ORDER_PATH = 'Orders';
+  private static readonly ORDER = 'finishOrder?';
   private readonly ORDER_BASE_PATH = environment.baseUrl + OrderService.ORDER_PATH;
+  private readonly ORDER_PATH = environment.baseUrl + OrderService.ORDER;
 
   constructor(private httpClient: HttpClient) {
   }
@@ -25,9 +27,19 @@ export class OrderService {
     return this.httpClient.post<void>(url, request, {observe: 'body'});
   }
 
+  public finish(userId: any, orderId: any): Observable<void> {
+    const url = `${this.ORDER_PATH}userid=${userId}&&orderid=${orderId}`;
+    return this.httpClient.get<void>(url, {observe: 'body'});
+  }
+
   public update(request: any): Observable<void> {
     const url = `${this.ORDER_BASE_PATH}/answer`;
     return this.httpClient.put<void>(url, request, {observe: 'body'});
+  }
+
+  public delete(id: number): Observable<void> {
+    const url = `${environment.baseUrl}/deleteOrder/${id}`;
+    return this.httpClient.delete<void>(url, {observe: 'body'});
   }
 
 }

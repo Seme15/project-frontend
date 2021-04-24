@@ -38,8 +38,15 @@
     </ng-container>
 
     <ng-container matColumnDef="zatwierdzono">
-      <th mat-header-cell *matHeaderCellDef> Zatwierdzono </th>
-      <td mat-cell *matCellDef="let element"><mat-checkbox [checked]="!element.accepted" [disabled]="true" [color]="'green'"></mat-checkbox></td>
+      <th mat-header-cell *matHeaderCellDef> Zatwierdzono</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox title="Zatwierdź" [disabled]="element.accepted" [checked]="element.accepted" (change)="finish(element)" [color]="'green'">
+        </mat-checkbox>
+          &nbsp;
+        <mat-icon class="icon-delete" title="Usuń" size="10" style="font-size: 20px;position: relative" (click)="delete(element)"
+        >delete
+        </mat-icon>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
